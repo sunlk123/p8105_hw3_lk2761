@@ -20,3 +20,37 @@ library(p8105.datasets)
 data("instacart")
 ```
 
+```{r count number of aisles}
+# This code produces a new dataframe that shows the number of distinct aisles and the number of items ordered from each. 
+
+num_aisles_df = 
+  instacart %>%
+  count(aisle) %>%
+  rename(.data = ., num_items_ordered = n) %>%
+  arrange(desc(num_items_ordered))
+```
+
+```{r create plot for # of items ordered in each aisle}
+num_aisles_df %>%
+  filter(.data = ., num_items_ordered > 10000)
+```
+
+```{r create table for most popular items in three specific aisles}
+# Create a table that shows the three most popular items in each of the aisles: baking ingredients, dog food care and packaged vegetables fruits.
+
+num_pop_items_df =
+  instacart %>%
+  group_by(aisle) %>%
+  select(.data = ., aisle, product_name) %>%
+  filter(.data = ., aisle == "baking ingredients" | aisle == "dog food care" | aisle == "packaged vegetables fruits") %>%
+  count(product_name) %>%
+  rename(.data = ., num_products = n) %>%
+  arrange(desc(num_products)) %>%
+  pivot_wider(
+    names_from = "aisle",
+    values_from = "num_products"
+  ) %>%
+  knitr::kable()
+```
+
+
