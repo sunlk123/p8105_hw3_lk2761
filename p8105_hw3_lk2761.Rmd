@@ -124,3 +124,22 @@ num_states_2010
 ```
 
 In 2002, the following states `r pull(num_states_2002, location_name)` were observed in 7 or more locations. In 2010, the following states `r pull(num_states_2010, location_name)` were observed in 7 or more locations.
+
+```{r create new dataset with only excellent responses for Overall Health}
+
+excellent_df = 
+  brfss_smart2010 %>%
+  janitor::clean_names() %>%
+  filter(.data = ., topic == "Overall Health", response == "Excellent") %>%
+  group_by(locationabbr) %>%
+  mutate(.data = . , 
+         state_name = state.name[match(locationabbr, state.abb)],
+         avg_data_value = mean(data_value, na.rm = TRUE)) %>%
+  select(.data = . , year, state_name, avg_data_value)
+
+# This code creates a "spaghetti" plot showing the average data values across years for each state. 
+
+ggplot(excellent_df, aes(group = state_name, x = year, y = avg_data_value, color = state_name)) + 
+  geom_line()
+```
+
