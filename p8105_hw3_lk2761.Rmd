@@ -72,12 +72,15 @@ mean_hr_day_df =
   arrange(product_name, order_dow) %>%
   group_by(product_name, order_dow) %>%
   summarize(
-    mean_hr_day = mean(order_hour_of_day)
+    mean_hr_day = round(mean(order_hour_of_day), 2)
   ) %>%
   pivot_wider(
     names_from = "order_dow",
     values_from = "mean_hr_day"
-  ) 
+  ) %>%
+  select(.data = ., Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday)
+
+knitr::kable(mean_hr_day_df)
 ```
 
 
