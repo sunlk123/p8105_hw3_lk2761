@@ -46,11 +46,13 @@ num_pop_items_df =
   count(product_name) %>%
   rename(.data = ., num_products = n) %>%
   arrange(desc(num_products)) %>%
+  top_n(3) %>%
   pivot_wider(
     names_from = "aisle",
     values_from = "num_products"
-  ) %>%
-  knitr::kable()
+  ) 
+
+knitr::kable(num_pop_items_df)
 ```
 
 
