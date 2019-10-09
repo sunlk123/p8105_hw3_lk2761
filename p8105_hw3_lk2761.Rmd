@@ -92,48 +92,48 @@ library(p8105.datasets)
 data("brfss_smart2010")
 
 # Clean the data
-brfss_smart2010 %>%
+brfss_smart2010_tidy =
+  brfss_smart2010 %>%
   janitor::clean_names() %>%
-  select(.data = ., topic, response) %>%
+    mutate(.data = ., state_name = state.name[match(locationabbr, state.abb)]) %>%
+  rename(.data = ., state_abbr = locationabbr, state_county = locationdesc) %>%
   filter(.data = ., topic == "Overall Health") %>%
-  mutate(.data = ., response_fac = factor(response, c("Poor", "Fair", "Good", "Very good", "Excellent")))
+  select(.data = ., year, state_abbr, state_name, state_county, topic, response, data_value)
 ```
 
 ```{r create dataframe for states in 2002 and 2010}
 num_states_2002 = 
-  brfss_smart2010 %>%
+  brfss_smart2010_tidy %>%
   janitor::clean_names() %>%
-  mutate(.data = . , location_name = state.name[match(locationabbr, state.abb)],) %>%
-  filter(.data = ., year == "2002", topic == "Overall Health") %>%
-  count(location_name) %>%
+  mutate(.data = . ,) %>%
+  filter(.data = ., year == "2002") %>%
+  count(state_name) %>%
   rename(.data = ., num_locations = n) %>%
   filter(.data = ., num_locations >= 7) 
 
 num_states_2002
 
 num_states_2010 = 
-  brfss_smart2010 %>%
+  brfss_smart2010_tidy %>%
   janitor::clean_names() %>%
-  mutate(.data = . , location_name = state.name[match(locationabbr, state.abb)],) %>%
-  filter(.data = ., year == "2010", topic == "Overall Health") %>%
-  count(location_name) %>%
+  filter(.data = ., year == "2010") %>%
+  count(state_name) %>%
   rename(.data = ., num_locations = n) %>%
   filter(.data = ., num_locations >= 7) 
 
 num_states_2010
 ```
 
-In 2002, the following states `r pull(num_states_2002, location_name)` were observed in 7 or more locations. In 2010, the following states `r pull(num_states_2010, location_name)` were observed in 7 or more locations.
+In 2002, the following states `r pull(num_states_2002, state_name)` were observed in 7 or more locations. In 2010, the following states `r pull(num_states_2010, state_name)` were observed in 7 or more locations.
 
 ```{r create new dataset with only excellent responses for Overall Health}
 
 excellent_df = 
-  brfss_smart2010 %>%
+  brfss_smart2010_tidy %>%
   janitor::clean_names() %>%
-  filter(.data = ., topic == "Overall Health", response == "Excellent") %>%
-  group_by(locationabbr) %>%
-  mutate(.data = . , 
-         state_name = state.name[match(locationabbr, state.abb)],
+  filter(.data = ., response == "Excellent") %>%
+  group_by(state_abbr) %>%
+  mutate(.data = . ,
          avg_data_value = mean(data_value, na.rm = TRUE)) %>%
   select(.data = . , year, state_name, avg_data_value)
 
@@ -141,5 +141,29 @@ excellent_df =
 
 ggplot(excellent_df, aes(group = state_name, x = year, y = avg_data_value, color = state_name)) + 
   geom_line()
+```
+
+```{r}
+# This code creates a new dataset that consists of NY state data values and responses to the "Overall Health" topic for 2006 and 2010. 
+
+ny_state_data =
+  brfss_smart2010_tidy %>%
+  janitor::clean_names() %>%
+  filter(.data = ., state_abbr == "NY", year == "2006" | year == "2010") %>%
+  arrange(year)
+
+# This code creates a two-panel plot showing the distribution of data values for the responses for NY state in 2006 and 2010.
+
+ggplot(ny_state_data, aes(x = state_county, y = data_value, fill = response)) + 
+  geom_col() +
+  facet_grid(~year) +
+  theme_minimal() +
+  theme(axis.title = element_text(size = 10),
+    axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Distribution of health responses in New York counties, 2006 and 2010", 
+       x = "County in New York",
+       y = "Proportion of health response") +
+  scale_color_hue(name = "Health response") +
+    theme(legend.position = "bottom") 
 ```
 
