@@ -103,12 +103,13 @@ brfss_smart2010 %>%
 num_states_2002 = 
   brfss_smart2010 %>%
   janitor::clean_names() %>%
+  mutate(.data = . , location_name = state.name[match(locationabbr, state.abb)],) %>%
   filter(.data = ., year == "2002", topic == "Overall Health") %>%
-  mutate(.data = ., 
-         location_name = state.name[locationabbr],
-         response_fac = factor(response, c("Poor", "Fair", "Good", "Very good", "Excellent"))) %>%
-  count(locationabbr) %>%
+  count(location_name) %>%
   rename(.data = ., num_locations = n) %>%
   filter(.data = ., num_locations >= 7) 
+
+num_states_2002
 ```
 
+In 2002, the following states `r pull(num_states_2002, location_name)` were observed in 7 or more locations.
