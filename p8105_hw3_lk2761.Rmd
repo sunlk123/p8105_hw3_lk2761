@@ -55,4 +55,29 @@ num_pop_items_df =
 knitr::kable(num_pop_items_df)
 ```
 
+```{r}
+mean_hr_day_df = 
+  instacart %>%
+  select(.data = ., product_name, order_dow, order_hour_of_day) %>%
+  mutate(.data = ., 
+         order_dow = recode(order_dow, 
+                            `0` = "Sunday",
+                            `1` = "Monday",
+                            `2` = "Tuesday", 
+                            `3` = "Wednesday",
+                            `4` = "Thursday", 
+                            `5` = "Friday", 
+                            `6` = "Saturday")) %>%
+  filter(.data = ., product_name == "Pink Lady Apple" | product_name == "Coffee Ice Cream") %>%
+  arrange(product_name, order_dow) %>%
+  group_by(product_name, order_dow) %>%
+  summarize(
+    mean_hr_day = mean(order_hour_of_day)
+  ) %>%
+  pivot_wider(
+    names_from = "order_dow",
+    values_from = "mean_hr_day"
+  ) 
+```
+
 
