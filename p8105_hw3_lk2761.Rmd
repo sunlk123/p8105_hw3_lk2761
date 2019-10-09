@@ -7,5 +7,16 @@ output: github_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+```
+
+## Problem 1 
+
+We are using Instacart data. 
+
+```{r load in Instacart dataset}
+library(p8105.datasets) 
+data("instacart")
 ```
 
