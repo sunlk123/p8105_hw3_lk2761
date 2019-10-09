@@ -99,7 +99,7 @@ brfss_smart2010 %>%
   mutate(.data = ., response_fac = factor(response, c("Poor", "Fair", "Good", "Very good", "Excellent")))
 ```
 
-```{r}
+```{r create dataframe for states in 2002 and 2010}
 num_states_2002 = 
   brfss_smart2010 %>%
   janitor::clean_names() %>%
@@ -110,6 +110,17 @@ num_states_2002 =
   filter(.data = ., num_locations >= 7) 
 
 num_states_2002
+
+num_states_2010 = 
+  brfss_smart2010 %>%
+  janitor::clean_names() %>%
+  mutate(.data = . , location_name = state.name[match(locationabbr, state.abb)],) %>%
+  filter(.data = ., year == "2010", topic == "Overall Health") %>%
+  count(location_name) %>%
+  rename(.data = ., num_locations = n) %>%
+  filter(.data = ., num_locations >= 7) 
+
+num_states_2010
 ```
 
-In 2002, the following states `r pull(num_states_2002, location_name)` were observed in 7 or more locations.
+In 2002, the following states `r pull(num_states_2002, location_name)` were observed in 7 or more locations. In 2010, the following states `r pull(num_states_2010, location_name)` were observed in 7 or more locations.
