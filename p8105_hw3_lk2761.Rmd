@@ -83,4 +83,32 @@ mean_hr_day_df =
 knitr::kable(mean_hr_day_df)
 ```
 
+## Problem 2
+
+This problem uses the BRFSS dataset. 
+
+```{r load in BRFSS dataset}
+library(p8105.datasets)
+data("brfss_smart2010")
+
+# Clean the data
+brfss_smart2010 %>%
+  janitor::clean_names() %>%
+  select(.data = ., topic, response) %>%
+  filter(.data = ., topic == "Overall Health") %>%
+  mutate(.data = ., response_fac = factor(response, c("Poor", "Fair", "Good", "Very good", "Excellent")))
+```
+
+```{r}
+num_states_2002 = 
+  brfss_smart2010 %>%
+  janitor::clean_names() %>%
+  filter(.data = ., year == "2002", topic == "Overall Health") %>%
+  mutate(.data = ., 
+         location_name = state.name[locationabbr],
+         response_fac = factor(response, c("Poor", "Fair", "Good", "Very good", "Excellent"))) %>%
+  count(locationabbr) %>%
+  rename(.data = ., num_locations = n) %>%
+  filter(.data = ., num_locations >= 7) 
+```
 
