@@ -30,9 +30,17 @@ num_aisles_df =
   arrange(desc(num_items_ordered))
 ```
 
-```{r create plot for # of items ordered in each aisle}
+```{r}
 num_aisles_df %>%
-  filter(.data = ., num_items_ordered > 10000)
+  filter(.data = ., num_items_ordered > 10000) %>%
+  ggplot() + 
+  geom_col(aes(x = aisle, y = num_items_ordered)) +
+theme_minimal() +
+  theme(axis.title = element_text(size = 10),
+    axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(title = "Number of items ordered per aisle", 
+       x = "Name of aisle",
+       y = "Number of items ordered") 
 ```
 
 ```{r create table for most popular items in three specific aisles}
