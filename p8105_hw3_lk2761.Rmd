@@ -205,14 +205,22 @@ accel_data =
 
 This dataset consists of five weeks of accelerometer data collected on a 63 year old man with BMI 25. There are `r ncol(accel_data)` variables and `r nrow(accel_data)` observations in this dataset. Of the 1444 variables in this dataset, 1440 variables represent the activity counts for each minute of a 24-hour day that starts as midnight.
 
-```{r}
-accel_data %>%
+The following code chunk creates a new dataframe based on the accel_data dataset. This new dataframe consists of a new variable that sums up the total daily activity for each of the 35 days. 
+```{r create new dataframe}
+accel_data_tot =
+  accel_data %>%
   mutate(.data = .,
          total_daily_activity = rowSums(accel_data[,5:1444], na.rm = TRUE)) %>%
-  select(.data = ., week, num_of_day, day, weekday_weekend, total_daily_activity, everything())
-```
+  select(.data = ., week, num_of_day, day, total_daily_activity)
 
+knitr::kable(accel_data_tot)
+```
+Looking at the table, it is a bit difficult to assess overall trends as the activity counts fluctuate both within each of the five weeks and between them. Based on this table, in Week 1, the patient had higher levels of physical activity counts on Friday (480542.62 counts) and Sunday (631105.00 counts).
+
+The following code chunk creates a new dataframe that consists of information on the week, day, and a single column capturing all activity.* instead of having them as individual columns. We then generate a line plot showing the 24-hour activity time course for each day. 
 ```{r}
+
+# create new dataframe called accel_data_long
 accel_data_long = 
   pivot_longer(accel_data,
                activity.1:activity.1440, 
@@ -238,3 +246,4 @@ ggplot(accel_data_long, aes(x = activity_count, y = num_of_day)) +
   scale_color_hue(name = "Day of the week") 
 ```
 
+Looking at the plot for the 24-hour activity time course for each day, out of a total of 35 days, it appears that the majority of daily activity counts for the 63 year-old male patient were between 0 activity counts and 2500 activity counts. 
