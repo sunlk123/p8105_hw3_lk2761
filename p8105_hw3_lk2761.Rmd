@@ -6,7 +6,12 @@ output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+	fig.width = 7, 
+  fig.height = 6,
+  out.width = "90%")
 
 library(tidyverse)
 ```
@@ -27,7 +32,7 @@ num_aisles_df =
   instacart %>%
   count(aisle) %>%
   rename(.data = ., num_items_ordered = n) %>%
-  arrange(desc(num_items_ordered))
+  arrange(desc(num_items_ordered)) 
 ```
 
 ```{r}
@@ -103,7 +108,12 @@ data("brfss_smart2010")
 brfss_smart2010_tidy =
   brfss_smart2010 %>%
   janitor::clean_names() %>%
-    mutate(.data = ., state_name = state.name[match(locationabbr, state.abb)]) %>%
+  filter(.data = ., 
+         topic == "Overall Health",
+         response == "Excellent" | response == "Fair" | response == "Good" | response == "Poor" | response == "Very good") %>% 
+  mutate(.data = ., 
+         state_name = state.name[match(locationabbr, state.abb)],
+         response = factor(response, levels = c("Poor", "Fair", "Good", "Very good", "Excellent"))) %>%
   rename(.data = ., state_abbr = locationabbr, state_county = locationdesc) %>%
   filter(.data = ., topic == "Overall Health") %>%
   select(.data = ., year, state_abbr, state_name, state_county, topic, response, data_value)
