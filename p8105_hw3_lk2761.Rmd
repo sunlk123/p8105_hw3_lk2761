@@ -191,8 +191,9 @@ ggplot(ny_state_data, aes(group = state_county, x = response, y = data_value, co
 accel_data = 
   read.csv("./data/accel_data.csv") %>%
   rename(.data = ., num_of_day = day_id) %>%
-  mutate(.data = ., weekday_weekend = ifelse(day == "Monday" | day == "Tuesday" | day == "Wednesday" | day == "Thursday" | day == "Friday", "weekday", "weekend")) %>%
+  mutate(.data = ., 
+         weekday_weekend = ifelse(day == "Monday" | day == "Tuesday" | day == "Wednesday" | day == "Thursday" | day == "Friday", "weekday", "weekend")) %>%
   select(.data = ., week, num_of_day, day, weekday_weekend, everything())
 ```
 
-
+This dataset consists of five weeks of accelerometer data collected on a 63 year old man with BMI 25. There are `r ncol(accel_data)` variables and `r nrow(accel_data)` observations in this dataset. Of the 1444 variables in this dataset, 1440 variables represent the activity counts for each minute of a 24-hour day that starts as midnight. 
