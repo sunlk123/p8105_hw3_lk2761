@@ -35,6 +35,11 @@ num_aisles_df =
   arrange(desc(num_items_ordered)) 
 ```
 
+There are a total of `r nrow(num_aisles_df)` aisles represented in the Instacart dataset. The aisles selling "fresh vegatables" (150609), "fresh fruits" (150473), "packaged vegetables fruits" (78493) and "yogurt" (55240). 
+
+
+The following code chunk creates a plot showing the number of items ordered in each aisle (limited to aisles with more than 10,000 items ordered). 
+
 ```{r}
 num_aisles_df %>%
   filter(.data = ., num_items_ordered > 10000) %>%
@@ -196,4 +201,17 @@ accel_data =
   select(.data = ., week, num_of_day, day, weekday_weekend, everything())
 ```
 
-This dataset consists of five weeks of accelerometer data collected on a 63 year old man with BMI 25. There are `r ncol(accel_data)` variables and `r nrow(accel_data)` observations in this dataset. Of the 1444 variables in this dataset, 1440 variables represent the activity counts for each minute of a 24-hour day that starts as midnight. 
+This dataset consists of five weeks of accelerometer data collected on a 63 year old man with BMI 25. There are `r ncol(accel_data)` variables and `r nrow(accel_data)` observations in this dataset. Of the 1444 variables in this dataset, 1440 variables represent the activity counts for each minute of a 24-hour day that starts as midnight.
+
+```{r}
+accel_data %>%
+  mutate(.data = .,
+         total_daily_activity = rowSums(accel_data[,5:1444], na.rm = TRUE)) %>%
+  select(.data = ., week, num_of_day, day, weekday_weekend, total_daily_activity, everything())
+```
+
+```{r}
+ggplot(accel_data, aes(x = num_of_day, y = activity.1, color = day)) + 
+  geom_line()
+```
+
