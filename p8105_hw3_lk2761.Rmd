@@ -177,7 +177,9 @@ num_states_2010
 
 In 2002, the following states `r pull(num_states_2002, state_name)` were observed in 7 or more locations. In 2010, the following states `r pull(num_states_2010, state_name)` were observed in 7 or more locations.
 
-```{r create new dataset with only excellent responses for Overall Health}
+```{r}
+
+# Create new dataset with only excellent responses for the Overall Health topic
 
 excellent_df = 
   brfss_smart2010_tidy %>%
@@ -223,6 +225,8 @@ ggplot(ny_state_data, aes(group = state_county, x = response, y = data_value, co
 ## Problem 3
 
 ```{r load and clean dataset}
+# Load and clean accelerometer data from imported csv
+
 accel_data = 
   read.csv("./data/accel_data.csv") %>%
   rename(.data = ., num_of_day = day_id) %>%
@@ -234,12 +238,17 @@ accel_data =
 This dataset consists of five weeks of accelerometer data collected on a 63 year old man with BMI 25. There are `r ncol(accel_data)` variables and `r nrow(accel_data)` observations in this dataset. Of the 1444 variables in this dataset, 1440 variables represent the activity counts for each minute of a 24-hour day that starts as midnight. The *week* variable represents the week number out of five weeks, the *num_of_day* represents the day number out of 35 days, the *day* variable represents the name of the day of the week and the *weekday_weekend* variable denotes whether the day is a weekday or is over the weekend. 
 
 The following code chunk creates a new dataframe based on the accel_data dataset. This new dataframe consists of a new variable that sums up the total daily activity for each of the 35 days. 
+
 ```{r create new dataframe}
+# Create new dataframe and create new variable that sums up the activity counts per day 
+
 accel_data_tot =
   accel_data %>%
   mutate(.data = .,
          total_daily_activity = rowSums(accel_data[,5:1444], na.rm = TRUE)) %>%
   select(.data = ., num_of_day, day, total_daily_activity)
+
+# Create table that shows the day number, the name of the day of the week and the total number of activity counts for that day 
 
 knitr::kable(accel_data_tot,
              caption = "Table 3. Total number of activity counts per day for 35 days",
@@ -251,14 +260,16 @@ Looking at the table, it is a bit difficult to assess overall trends as the acti
 
 The following code chunk creates a new dataframe that consists of information on the week, day, and a single column capturing all activity.* instead of having them as individual columns. We then generate a line plot showing the 24-hour activity time course for each day. 
 ```{r}
+# Create new dataframe called accel_data_long
 
-# create new dataframe called accel_data_long
 accel_data_long = 
   pivot_longer(accel_data,
                activity.1:activity.1440, 
                names_to = "activity_min",
                values_to = "activity_count") %>%
   mutate(.data = ., activity_count = round(activity_count, 2)) 
+
+# Create a plot that shows the distribution of the 24-hour activity time courses for each day 
 
 ggplot(accel_data_long, aes(x = activity_count, y = num_of_day)) + 
   geom_line(aes(color = day)) +
