@@ -190,7 +190,9 @@ ggplot(ny_state_data, aes(group = state_county, x = response, y = data_value, co
 ```{r load and clean dataset}
 accel_data = 
   read.csv("./data/accel_data.csv") %>%
-  rename(.data = ., num_of_day = day_id) 
+  rename(.data = ., num_of_day = day_id) %>%
+  mutate(.data = ., weekday_weekend = ifelse(day == "Monday" | day == "Tuesday" | day == "Wednesday" | day == "Thursday" | day == "Friday", "weekday", "weekend")) %>%
+  select(.data = ., week, num_of_day, day, weekday_weekend, everything())
 ```
 
 
