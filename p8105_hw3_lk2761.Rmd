@@ -70,7 +70,12 @@ num_pop_items_df =
     values_from = "num_products"
   ) 
 
-knitr::kable(num_pop_items_df)
+knitr::kable(num_pop_items_df,
+             caption = "Table 1. Three Most Popular Items Sold in the Packaged Vegetables Fruits, Baking Ingredients and Dog Food Care Aisles",
+             col.names = c("Name of Product",
+             "Packaged Vegetables Fruits Aisle",
+             "Baking Ingredients Aisle",
+             "Dog Food Care Aisle"))
 ```
 
 ```{r}
@@ -211,9 +216,12 @@ accel_data_tot =
   accel_data %>%
   mutate(.data = .,
          total_daily_activity = rowSums(accel_data[,5:1444], na.rm = TRUE)) %>%
-  select(.data = ., week, num_of_day, day, total_daily_activity)
+  select(.data = ., num_of_day, day, total_daily_activity)
 
-knitr::kable(accel_data_tot)
+knitr::kable(accel_data_tot,
+             col.names = c("Number of Day (out of 35 days)",
+                           "Day",
+                           "Total number of activity counts"))
 ```
 Looking at the table, it is a bit difficult to assess overall trends as the activity counts fluctuate both within each of the five weeks and between them. Based on this table, in Week 1, the patient had higher levels of physical activity counts on Friday (480542.62 counts) and Sunday (631105.00 counts).
 
