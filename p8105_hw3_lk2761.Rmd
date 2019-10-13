@@ -193,7 +193,13 @@ excellent_df =
 # This code creates a "spaghetti" plot showing the average data values across years for each state. 
 
 ggplot(excellent_df, aes(group = state_name, x = year, y = avg_data_value, color = state_name)) + 
-  geom_line()
+  geom_line() +
+  theme_minimal() +
+  theme(axis.title = element_text(size = 10)) +
+  labs(title = "Distribution of the average value of excellent responses in states, 2002 through 2010", 
+       x = "Year",
+       y = "Average value of excellent responses") +
+  scale_color_hue(name = "State") 
 ```
 
 ```{r}
@@ -256,7 +262,7 @@ knitr::kable(accel_data_tot,
                            "Day",
                            "Total number of activity counts"))
 ```
-Looking at the table, it is a bit difficult to assess overall trends as the activity counts fluctuate both within each of the five weeks and between them. Based on this table, in Week 1, the patient had higher levels of physical activity counts on Friday (480542.62 counts) and Sunday (631105.00 counts).
+Looking at the table, it is a bit difficult to assess overall trends as the activity counts fluctuate both within each of the five weeks and between them. Based on this table, in Week 1, the patient had higher levels of physical activity counts on Friday (480542.62 counts) and Sunday (631105.00 counts). 
 
 The following code chunk creates a new dataframe that consists of information on the week, day, and a single column capturing all activity.* instead of having them as individual columns. We then generate a line plot showing the 24-hour activity time course for each day. 
 ```{r}
