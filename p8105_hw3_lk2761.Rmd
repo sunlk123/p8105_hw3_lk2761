@@ -26,6 +26,7 @@ data("instacart")
 ```
 
 This code chunk produces a new dataframe that shows the number of distinct aisles and the number of items ordered from each. 
+
 ```{r count number of aisles}
 num_aisles_df = 
   instacart %>%
@@ -37,6 +38,7 @@ num_aisles_df =
 There are a total of `r nrow(num_aisles_df)` aisles represented in the Instacart dataset. The aisles selling "fresh vegatables" (150609), "fresh fruits" (150473), "packaged vegetables fruits" (78493) and "yogurt" (55240). 
 
 The following code chunk filters through the dataset to include the aisles that sold more than 10000 items and creates a plot showing the number of items ordered in each aisle. 
+
 ```{r}
 num_aisles_df %>%
   filter(.data = ., num_items_ordered > 10000) %>%
@@ -51,6 +53,7 @@ num_aisles_df %>%
 ```
 
 This code chunk creates a table that shows the three most popular items in each of the aisles: baking ingredients, dog food care and packaged vegetables fruits.
+
 ```{r}
 num_pop_items_df =
   instacart %>%
@@ -77,6 +80,7 @@ knitr::kable(num_pop_items_df,
 Table 1 shows the three most popular items sold in three aisles: packaged vegetables and fruits, baking ingredients and dog food care. The top item sold in the packaged vegetables and fruits aisle was organic baby spinach (9784), light brown sugar (499) in the baking ingredients aisle and snack sticks chicken and rice recipe dog treats (30) in the dog food care aisle. 
 
 The following code chunk creates a new dataframe based on the Instacart dataset. A new variable has been added to show the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream were ordered. The code also generates a table that showing this information. 
+
 ```{r}
 mean_hr_day_df = 
   instacart %>%
@@ -139,6 +143,7 @@ brfss_smart2010_tidy =
 ```
 
 The following data creates two new dataframes showing data for all states in 2002 and in 2010.
+
 ```{r}
 num_states_2002 = 
   brfss_smart2010_tidy %>%
@@ -161,6 +166,7 @@ num_states_2010 =
 In 2002, the following states `r pull(num_states_2002, state_name)` were observed in 7 or more locations. In 2010, the following states `r pull(num_states_2010, state_name)` were observed in 7 or more locations.
 
 The following code chunk creates a new dataset that only includes "Excellent" as responses to the "Overall Health" topic. It also includes a new variable that averages the data values for each state. The second section of code creates a "spaghetti" plot that shows the average data values across years for each state.
+
 ```{r}
 excellent_df = 
   brfss_smart2010_tidy %>%
@@ -182,6 +188,7 @@ ggplot(excellent_df, aes(group = state_name, x = year, y = avg_data_value, color
 ```
 
 This code creates a new dataset that consists of NY state data values and responses to the "Overall Health" topic for 2006 and 2010. The data are presented in a two-panel plot.
+
 ```{r}
 ny_state_data =
   brfss_smart2010_tidy %>%
@@ -208,6 +215,7 @@ ggplot(ny_state_data, aes(group = state_county, x = response, y = data_value, co
 This problem utilizes accelerometer data collected on a 63 year-old man over the course of five weeks.
 
 The following code chunk imports the csv file and tidies up the data. 
+
 ```{r load and clean dataset}
 accel_data = 
   read.csv("./data/accel_data.csv") %>%
@@ -234,9 +242,11 @@ knitr::kable(accel_data_tot,
                            "Day",
                            "Total number of activity counts"))
 ```
-Looking at the table, it is a bit difficult to assess overall trends as the activity counts fluctuate both within each of the five weeks and between them. Based on this table, in Week 1, the patient had higher levels of physical activity counts on Friday (480542.62 counts) and Sunday (631105.00 counts). 
+
+Looking at the table, it is a bit difficult to assess overall trends as the activity counts fluctuate both within each of the five weeks and between them. Based on this table, in Week 1, the patient had higher levels of physical activity counts on Friday (480542.62 counts) and Sunday (631105.00 counts). The lowest counts of activity were on Day 24 and Day 31 (both were Saturdays) where the counts were only 1440 for each. The highest number of activity counts was for Day 16, which was a Monday, with a total of 685910 activity counts.
 
 The following code chunk creates a new dataframe that consists of information on the week, day, and a single column capturing all activity.* instead of having them as individual columns. We then generate a line plot showing the 24-hour activity time course for each day. 
+
 ```{r}
 accel_data_long = 
   pivot_longer(accel_data,
