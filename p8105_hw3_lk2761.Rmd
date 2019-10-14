@@ -18,18 +18,15 @@ library(tidyverse)
 
 ## Problem 1 
 
-We are using Instacart data. 
+We are using Instacart data that will be loaded in through the p8105.datasets. 
 
 ```{r load dataset}
-
-# load in p8105.datasets and access instacart data
 library(p8105.datasets) 
 data("instacart")
 ```
 
+This code chunk produces a new dataframe that shows the number of distinct aisles and the number of items ordered from each. 
 ```{r count number of aisles}
-# This code produces a new dataframe that shows the number of distinct aisles and the number of items ordered from each. 
-
 num_aisles_df = 
   instacart %>%
   count(aisle) %>%
@@ -39,12 +36,8 @@ num_aisles_df =
 
 There are a total of `r nrow(num_aisles_df)` aisles represented in the Instacart dataset. The aisles selling "fresh vegatables" (150609), "fresh fruits" (150473), "packaged vegetables fruits" (78493) and "yogurt" (55240). 
 
-
-The following code chunk creates a plot showing the number of items ordered in each aisle (limited to aisles with more than 10,000 items ordered). 
-
+The following code chunk filters through the dataset to include the aisles that sold more than 10000 items and creates a plot showing the number of items ordered in each aisle. 
 ```{r}
-# Filter through the dataset to include the aisles that sold more than 10000 items and create a plot to show these aisles by the number of items sold 
-
 num_aisles_df %>%
   filter(.data = ., num_items_ordered > 10000) %>%
   ggplot() + 
@@ -57,9 +50,8 @@ num_aisles_df %>%
        y = "Number of items ordered") 
 ```
 
-```{r create table for most popular items in three specific aisles}
-# Create a table that shows the three most popular items in each of the aisles: baking ingredients, dog food care and packaged vegetables fruits.
-
+This code chunk creates a table that shows the three most popular items in each of the aisles: baking ingredients, dog food care and packaged vegetables fruits.
+```{r}
 num_pop_items_df =
   instacart %>%
   group_by(aisle) %>%
@@ -84,11 +76,8 @@ knitr::kable(num_pop_items_df,
 
 Table 1 shows the three most popular items sold in three aisles: packaged vegetables and fruits, baking ingredients and dog food care. The top item sold in the packaged vegetables and fruits aisle was organic baby spinach (9784), light brown sugar (499) in the baking ingredients aisle and snack sticks chicken and rice recipe dog treats (30) in the dog food care aisle. 
 
-The following code chunk creates a new dataframe based on the Instacart dataset and generates a table that shows the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream were ordered from Sunday to Saturday.
-
+The following code chunk creates a new dataframe based on the Instacart dataset. A new variable has been added to show the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream were ordered. The code also generates a table that showing this information. 
 ```{r}
-# Create new dataframe that only includes data on Pink Lady Apples and Coffee Ice Cream, and creates new variable to show the mean hour of day at which they were ordered 
-
 mean_hr_day_df = 
   instacart %>%
   select(.data = ., product_name, order_dow, order_hour_of_day) %>%
@@ -113,8 +102,6 @@ mean_hr_day_df =
   ) %>%
   select(.data = ., Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday)
 
-# Create table to show the mean hour of the day these two items were sold
-
 knitr::kable(mean_hr_day_df,
              caption = "Table 2. Mean hour items were sold per day", 
              col.names = c("Name of Product", 
@@ -131,13 +118,12 @@ Table 2 shows the mean hour of the day (in military time) at which Pink Lady App
 
 ## Problem 2
 
-Problem 2 uses the BRFSS dataset. 
+Problem 2 uses the BRFSS dataset loaded in from the p8105.datasets. The following code chunk tidies up the data by filtering through to only focus on the "Overall Health" topic and to reorder the factor levels of the response variable. 
 
 ```{r load in BRFSS dataset}
 library(p8105.datasets)
 data("brfss_smart2010")
 
-# Clean the data
 brfss_smart2010_tidy =
   brfss_smart2010 %>%
   janitor::clean_names() %>%
@@ -152,7 +138,8 @@ brfss_smart2010_tidy =
   select(.data = ., year, state_abbr, state_name, state_county, topic, response, data_value)
 ```
 
-```{r create dataframe for states in 2002 and 2010}
+The following data creates two new dataframes showing data for all states in 2002 and in 2010.
+```{r}
 num_states_2002 = 
   brfss_smart2010_tidy %>%
   janitor::clean_names() %>%
@@ -162,8 +149,6 @@ num_states_2002 =
   rename(.data = ., num_locations = n) %>%
   filter(.data = ., num_locations >= 7) 
 
-num_states_2002
-
 num_states_2010 = 
   brfss_smart2010_tidy %>%
   janitor::clean_names() %>%
@@ -171,16 +156,12 @@ num_states_2010 =
   count(state_name) %>%
   rename(.data = ., num_locations = n) %>%
   filter(.data = ., num_locations >= 7) 
-
-num_states_2010
 ```
 
 In 2002, the following states `r pull(num_states_2002, state_name)` were observed in 7 or more locations. In 2010, the following states `r pull(num_states_2010, state_name)` were observed in 7 or more locations.
 
+The following code chunk creates a new dataset that only includes "Excellent" as responses to the "Overall Health" topic. It also includes a new variable that averages the data values for each state. The second section of code creates a "spaghetti" plot that shows the average data values across years for each state.
 ```{r}
-
-# Create new dataset with only excellent responses for the Overall Health topic
-
 excellent_df = 
   brfss_smart2010_tidy %>%
   janitor::clean_names() %>%
@@ -189,8 +170,6 @@ excellent_df =
   mutate(.data = . ,
          avg_data_value = mean(data_value, na.rm = TRUE)) %>%
   select(.data = . , year, state_name, avg_data_value)
-
-# This code creates a "spaghetti" plot showing the average data values across years for each state. 
 
 ggplot(excellent_df, aes(group = state_name, x = year, y = avg_data_value, color = state_name)) + 
   geom_line() +
@@ -202,16 +181,13 @@ ggplot(excellent_df, aes(group = state_name, x = year, y = avg_data_value, color
   scale_color_hue(name = "State") 
 ```
 
+This code creates a new dataset that consists of NY state data values and responses to the "Overall Health" topic for 2006 and 2010. The data are presented in a two-panel plot.
 ```{r}
-# This code creates a new dataset that consists of NY state data values and responses to the "Overall Health" topic for 2006 and 2010. 
-
 ny_state_data =
   brfss_smart2010_tidy %>%
   janitor::clean_names() %>%
   filter(.data = ., state_abbr == "NY", year == "2006" | year == "2010") %>%
   arrange(year)
-
-# This code creates a two-panel plot showing the distribution of data values for the responses for NY state in 2006 and 2010.
 
 ggplot(ny_state_data, aes(group = state_county, x = response, y = data_value, color = state_county)) + 
   geom_line() +
@@ -229,10 +205,10 @@ ggplot(ny_state_data, aes(group = state_county, x = response, y = data_value, co
 ```
 
 ## Problem 3
+This problem utilizes accelerometer data collected on a 63 year-old man over the course of five weeks.
 
+The following code chunk imports the csv file and tidies up the data. 
 ```{r load and clean dataset}
-# Load and clean accelerometer data from imported csv
-
 accel_data = 
   read.csv("./data/accel_data.csv") %>%
   rename(.data = ., num_of_day = day_id) %>%
@@ -243,18 +219,14 @@ accel_data =
 
 This dataset consists of five weeks of accelerometer data collected on a 63 year old man with BMI 25. There are `r ncol(accel_data)` variables and `r nrow(accel_data)` observations in this dataset. Of the 1444 variables in this dataset, 1440 variables represent the activity counts for each minute of a 24-hour day that starts as midnight. The *week* variable represents the week number out of five weeks, the *num_of_day* represents the day number out of 35 days, the *day* variable represents the name of the day of the week and the *weekday_weekend* variable denotes whether the day is a weekday or is over the weekend. 
 
-The following code chunk creates a new dataframe based on the accel_data dataset. This new dataframe consists of a new variable that sums up the total daily activity for each of the 35 days. 
+The following code chunk creates a new dataframe based on the accel_data dataset. This new dataframe consists of a new variable that sums up the total daily activity for each of the 35 days. The code also creates a table that shows the number of data, the name of the day of the week as well as the total number of activity counts for each day. 
 
 ```{r create new dataframe}
-# Create new dataframe and create new variable that sums up the activity counts per day 
-
 accel_data_tot =
   accel_data %>%
   mutate(.data = .,
          total_daily_activity = rowSums(accel_data[,5:1444], na.rm = TRUE)) %>%
   select(.data = ., num_of_day, day, total_daily_activity)
-
-# Create table that shows the day number, the name of the day of the week and the total number of activity counts for that day 
 
 knitr::kable(accel_data_tot,
              caption = "Table 3. Total number of activity counts per day for 35 days",
@@ -266,16 +238,12 @@ Looking at the table, it is a bit difficult to assess overall trends as the acti
 
 The following code chunk creates a new dataframe that consists of information on the week, day, and a single column capturing all activity.* instead of having them as individual columns. We then generate a line plot showing the 24-hour activity time course for each day. 
 ```{r}
-# Create new dataframe called accel_data_long
-
 accel_data_long = 
   pivot_longer(accel_data,
                activity.1:activity.1440, 
                names_to = "activity_min",
                values_to = "activity_count") %>%
   mutate(.data = ., activity_count = round(activity_count, 2)) 
-
-# Create a plot that shows the distribution of the 24-hour activity time courses for each day 
 
 ggplot(accel_data_long, aes(x = activity_count, y = num_of_day)) + 
   geom_line(aes(color = day)) +
